@@ -31,10 +31,12 @@ def join_game(game, player):
 
 def make_move(game, player, move):
     board = json.loads(game['board'])
-    if valid_move():
+    if players_turn(game['players'], player):
         board[move] = player
         game['players'][player].add(move)
-        # check if win
+        winner = check_win(board, player, game['board_size'])
+        if not winner:
+            game['winner'] = winner
         return game
     return 'Move was not valid'
 
@@ -58,14 +60,14 @@ def check_win(board, player, board_size):
                 elif n == board_size:
                     return player
 
-    #diag down
+    # diag down win
     for i in range(0, board_size):
         if board[board_size * i + i + 1] != player:
             continue
         elif i == board_size - 1:
             return player
 
-    #diag up
+    # diag up win
     for i in range(1, board_size + 1):
         if board[board_size * i - i + 1] != player:
             continue
@@ -74,6 +76,10 @@ def check_win(board, player, board_size):
     return False
 
 
-# checks 1) if it's player's turn, 2) if move is available
-def valid_move():
+def players_turn(players, curr_player):
+    num_moves_curr = len(curr_player)
+    for player in players:
+        if player == '-' or num_moves_curr != len(player) or num_moves_curr != len(player - 1):
+            return False
     return True
+
