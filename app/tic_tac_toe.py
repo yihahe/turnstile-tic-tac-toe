@@ -1,5 +1,6 @@
 # start_game creates a model of tic-tac-toe
 import json
+from app.utils import json_keys_int
 
 
 def create_board(board_size):
@@ -21,24 +22,27 @@ def reset_game(game):
     return start_game(game['board_size'], len(game['players']))
 
 
-def join_game(game, player):
-    if player in game['players'] and game['players'].get(player) == '-':
-        game['players'] = []
-        return game
+def join_game(game):
+    for player in game['players']:
+        if game['players'].get(player) == '-':
+            game['players'][player] = []
+            return game, f'Your player id is {player}'
     else:
-        return 'Player cannot be selected'
+        return game, 'No player is available'
 
 
 def make_move(game, player, move):
-    board = json.loads(game['board'])
-    if players_turn(game['players'], player):
+    board = json.loads(game['board'], object_hook=json_keys_int)
+    if players_turn(game['players'], player) and valid_move(move, board):
         board[move] = player
-        game['players'][player].add(move)
+        game['board'] = json.dumps(board)
+        game['players'][player].append(move)
         winner = check_win(board, player, game['board_size'])
-        if not winner:
+        if winner:
             game['winner'] = winner
-        return game
-    return 'Move was not valid'
+            return game, f'Congratulations {winner}'
+        return game, 'Move done'
+    return game, 'Move is not valid'
 
 
 def check_win(board, player, board_size):
@@ -46,8 +50,9 @@ def check_win(board, player, board_size):
     for i in range(1, board_size + 1):
         if board[i] == player:
             for n in range(1, board_size):
+                print(i + board_size * n)
                 if board[i + board_size * n] != player:
-                    continue
+                    break
                 elif n == (board_size - 1):
                     return player
 
@@ -56,30 +61,41 @@ def check_win(board, player, board_size):
         if board[1 + board_size * i] == player:
             for n in range(2, board_size + 1):
                 if board[i * board_size + n] != player:
-                    continue
+                    break
                 elif n == board_size:
                     return player
 
     # diag down win
     for i in range(0, board_size):
         if board[board_size * i + i + 1] != player:
-            continue
+            break
         elif i == board_size - 1:
             return player
 
     # diag up win
     for i in range(1, board_size + 1):
         if board[board_size * i - i + 1] != player:
-            continue
+            break
         elif i == board_size - 1:
             return player
     return False
 
 
 def players_turn(players, curr_player):
-    num_moves_curr = len(curr_player)
-    for player in players:
-        if player == '-' or num_moves_curr != len(player) or num_moves_curr != len(player - 1):
+    num_moves_curr = len(players[curr_player])
+    for player_id in players:
+        # it is not a player's turn to play if
+        # 1) not all players are registered yet
+        # 2) they have played more moves than other players
+        # 3) they have played the same amount of moves, but other players are supposed to go first
+        if players[player_id] == '-' or \
+                num_moves_curr > len(players[player_id]) or \
+                (num_moves_curr == len(players[player_id]) and curr_player > player_id):
             return False
     return True
 
+
+def valid_move(move, board):
+    if move in board and board[move] == '-':
+        return True
+    return False

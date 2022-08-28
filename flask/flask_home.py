@@ -11,7 +11,7 @@ def hello():
     return 'Welcome to Turnstile Tic Tac Toe!'
 
 
-@app.route('/new_game', methods=['POST', 'GET'])
+@app.route('/game/new_game', methods=['POST', 'GET'])
 def new_game():
     # default tic-tac-toe settings with auto-incrementing game_id
     board_dimensions = 3
@@ -25,10 +25,28 @@ def new_game():
     return f'Your game id is {game_id}'
 
 
-@app.route('/reset_game/{game_id}', methods=['GET'])
+@app.route('/game/<game_id>/reset_game', methods=['GET'])
 def reset_game(game_id):
     game = rj.jsonget(game_id, Path.rootPath())
     rj.jsonset(game_id, Path.rootPath(), ttt.reset_game(game))
+    return f'Your game {game_id} has reset'
+
+
+@app.route('/game/<game_id>/join_game', methods=['GET'])
+def join_game(game_id):
+    game = rj.jsonget(game_id, Path.rootPath())
+    game, message = ttt.join_game(game)
+    rj.jsonset(game_id, Path.rootPath(), game)
+    return message
+
+
+@app.route('/game/<game_id>/<player_id>', methods=['POST'])
+def play_game(game_id, player_id):
+    game = rj.jsonget(game_id, Path.rootPath())
+    move = request.json['move'] if 'move' in request.json else 0
+    game, message = ttt.make_move(game, player_id, move)
+    rj.jsonset(game_id, Path.rootPath(), game)
+    return message
 
 
 if __name__ == '__main__':
