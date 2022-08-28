@@ -25,5 +25,11 @@ def new_game():
     return f'Your game id is {game_id}'
 
 
+@app.route('/reset_game/{game_id}', methods=['GET'])
+def reset_game(game_id):
+    game = rj.jsonget(game_id, Path.rootPath())
+    rj.jsonset(game_id, Path.rootPath(), ttt.reset_game(game))
+
+
 if __name__ == '__main__':
     app.run(debug=True)
