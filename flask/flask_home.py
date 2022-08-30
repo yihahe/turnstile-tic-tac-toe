@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from rejson import Client, Path
 from app import tic_tac_toe as ttt
 
@@ -9,6 +9,12 @@ rj = Client(host='localhost', port=6379, decode_responses=True)
 @app.route('/')
 def hello():
     return 'Welcome to Turnstile Tic Tac Toe!'
+
+
+@app.route('/api/docs')
+def get_docs():
+    print('sending docs')
+    return render_template('swaggerui.html')
 
 
 @app.route('/game/new_game', methods=['POST', 'GET'])

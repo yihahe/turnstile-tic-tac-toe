@@ -1,0 +1,244 @@
+openapi: 3.0.3
+info:
+  title: Turnstile Tic Tac Toe - OpenAPI 3.0
+  description: |-
+    This is documentation for Turnstile Tic Tac Toe, where you will be able to create a game, join a game, or play.
+  version: 0.0.1
+servers:
+  - url: https://localhost:5000/api/docs
+tags:
+  - name: game
+    description: Functions to create a new game, as well as reset a game and move as a player
+paths:
+  /game/new_game:
+    get:
+      tags:
+        - game
+      summary: Create a new game
+      description: This will create a new game with a default 3x3 board and 2 players
+      operationId: new_game_default
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '405':
+          description: invalid response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Response'
+    post:
+      tags:
+        - game
+      summary: Create a new game with custom parameters
+      description: This will create a new game with a board of your choosing and number of players of your choosing.
+      operationId: new_game_custom
+      parameters:
+        - name: board_dimensions
+          in: query
+          description: size of the side of the board
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: num_players
+          in: query
+          description: number of players playing tic tac toe
+          required: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewGame'
+        description: Set board_dimensions for a board size of board_dimensions by board_dimensions, and num_players for a custom number of players
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '405':
+          description: invalid response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /game/{game_id}/reset_game:
+    get:
+      tags:
+        - game
+      summary: Resets game given a game_id
+      description: Resets the board, as well as the players, given a game_id. This will keep the number of players, as well as the board size, from the original game.
+      operationId: reset_game
+      parameters:
+        - name: game_id
+          in: path
+          description: game_id to reset
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '400':
+          description: invalid response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /game/{game_id}/join_game:
+    get:
+      tags:
+        - game
+      summary: Allows players to join game given a game_id
+      description: If the game has available player slots, allow player to join game.
+      operationId: join_game
+      parameters:
+        - name: game_id
+          in: path
+          description: game_id to join
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '400':
+          description: invalid response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /game/{game_id}/{player_id}:
+    post:
+      tags:
+        - game
+      summary: Allows player_id to make move in game_id
+      description: If the game has available player slots, allow player to join game.
+      operationId: make_move
+      parameters:
+        - name: game_id
+          in: path
+          description: game_id to join
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int64
+        - name: player_id
+          in: path
+          description: game_id to join
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int64
+        - name: move
+          in: query
+          description: move to play (from 1 to board_size^2)
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Move'
+        description: make a move for player_id in game_id
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '400':
+          description: invalid response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Response'
+components:
+  schemas:
+    Response:
+      type: string
+    NewGame:
+      type: object
+      properties:
+        board_dimensions:
+          type: integer
+          format: int64
+        num_players:
+          type: integer
+          format: int64
+      xml:
+        name: newgame
+    Move:
+      type: object
+      properties:
+        move:
+          type: integer
+          format: int64
+      xml:
+        name: move
+  requestBodies:
+    Response:
+      description: request response strings
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Response'

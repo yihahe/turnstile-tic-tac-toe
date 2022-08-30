@@ -17,11 +17,3 @@
     <script src="{{url_for('static', filename='js/swagger-initializer.js')}}" charset="UTF-8"> </script>
   </body>
 </html>
-
-window.onload = function() {
-  window.ui = SwaggerUIBundle({
-    url: document.getElementById("swagger-ui").getAttribute('openapi-url'),
-    dom_id: '#swagger-ui',
-    ...
-  });
-};
