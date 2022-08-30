@@ -4,7 +4,6 @@ services:
         ports:
             - '6379:6379'
     web:
-        image: yihahe/turnstile
         build: .
         ports:
             - "5000:5000"
