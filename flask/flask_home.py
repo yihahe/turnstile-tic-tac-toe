@@ -49,6 +49,8 @@ def join_game(game_id):
 @app.route('/game/<game_id>/<player_id>', methods=['POST'])
 def play_game(game_id, player_id):
     game = rj.jsonget(game_id, Path.rootPath())
+    if game['winner'] != '-':
+        return f"{game['winner']} has already won."
     move = request.json['move'] if 'move' in request.json else 0
     game, message = ttt.make_move(game, player_id, move)
     rj.jsonset(game_id, Path.rootPath(), game)
