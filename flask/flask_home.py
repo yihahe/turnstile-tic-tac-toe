@@ -3,7 +3,7 @@ from rejson import Client, Path
 from app import tic_tac_toe as ttt
 
 app = Flask(__name__)
-rj = Client(host='localhost', port=6379, decode_responses=True)
+rj = Client(host='redis', port=6379, decode_responses=True)
 
 
 @app.route('/')
@@ -58,4 +58,4 @@ def play_game(game_id, player_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
