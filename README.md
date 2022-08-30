@@ -6,7 +6,7 @@ https://redis.io/docs/stack/json/
 You can also run using Docker. The latest production docker image for turnstile-tic-tac-toe is available to pull here:
 docker pull yihahe/turnstile:latest
 
-Documentation on currently available endpoints can be found here after running app/flask_home.py: http://127.0.0.1:5000/api/docs
+Documentation on currently available endpoints can be found here after running flask_home.py: http://127.0.0.1:5000/api/docs
 
 **New Game**
 ----
