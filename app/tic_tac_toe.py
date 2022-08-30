@@ -17,11 +17,12 @@ def start_game(board_size, num_players):
     return game
 
 
-# similar to start_game, but reset_game keeps the same board_size and num_players as the previous game
+# similar to start_game, reset_game keeps the same board_size and num_players as the previous game
 def reset_game(game):
     return start_game(game['board_size'], len(game['players']))
 
 
+# join_game allows players to join a game if there are any players available
 def join_game(game):
     for player in game['players']:
         if game['players'].get(player) == '-':
@@ -31,6 +32,7 @@ def join_game(game):
         return game, 'No player is available'
 
 
+# make_move allows specific players to make valid moves
 def make_move(game, player, move):
     board = json.loads(game['board'], object_hook=json_keys_int)
     if players_turn(game['players'], player) and valid_move(move, board):
