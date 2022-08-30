@@ -2,8 +2,11 @@
 
 FROM python:3.9-slim-buster
 
-WORKDIR /flask
-COPY requirements.txt requirements.txt
+ADD . /code
+WORKDIR /code
+
+EXPOSE 5000
+
 RUN pip3 install -r requirements.txt
 
-CMD [ "python3" , "run", "flask_home"]
+CMD [ "python3" , "flask_home.py", "runserver", "0.0.0.0:5000"]
